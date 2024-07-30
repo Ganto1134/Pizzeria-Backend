@@ -17,6 +17,9 @@ public partial class PizzeriaContext : DbContext
     }
 
     public DbSet<User> Users { get; set; }
+    public DbSet<Pizza> Pizze { get; set; }
+    public DbSet<Ingrediente> Ingredienti { get; set; }
+    public DbSet<PizzaIngrediente> PizzaIngrediente { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer("Data Source=.\\SQLEXPRESS;Initial Catalog=Pizzeria;Integrated Security=true;TrustServerCertificate=True");
@@ -24,6 +27,19 @@ public partial class PizzeriaContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         OnModelCreatingPartial(modelBuilder);
+
+        modelBuilder.Entity<PizzaIngrediente>()
+            .HasKey(pi => new { pi.PizzaId, pi.IngredienteId });
+
+        modelBuilder.Entity<PizzaIngrediente>()
+            .HasOne(pi => pi.Pizza)
+            .WithMany(p => p.PizzaIngredienti)
+            .HasForeignKey(pi => pi.PizzaId);
+
+        modelBuilder.Entity<PizzaIngrediente>()
+            .HasOne(pi => pi.Ingrediente)
+            .WithMany(i => i.PizzaIngredienti)
+            .HasForeignKey(pi => pi.IngredienteId);
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);

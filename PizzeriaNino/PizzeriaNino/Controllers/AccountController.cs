@@ -16,14 +16,12 @@ namespace PizzeriaNino.Controllers
             _userService = userService;
         }
 
-        // Vista di registrazione
         [HttpGet]
         public IActionResult Register()
         {
             return View();
         }
 
-        // Azione di registrazione
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
@@ -32,7 +30,6 @@ namespace PizzeriaNino.Controllers
                 var user = await _userService.RegisterUserAsync(model.Username, model.Email, model.Password, "User");
                 if (user != null)
                 {
-                    // Redirect al login o alla homepage
                     return RedirectToAction("Login", "Account");
                 }
                 ModelState.AddModelError("", "Registration failed.");
@@ -40,14 +37,12 @@ namespace PizzeriaNino.Controllers
             return View(model);
         }
 
-        // Vista di login
         [HttpGet]
         public IActionResult Login()
         {
             return View();
         }
 
-        // Azione di login
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
