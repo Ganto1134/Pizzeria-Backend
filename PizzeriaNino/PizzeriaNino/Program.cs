@@ -27,6 +27,14 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("RequireLoggedIn", policy => policy.RequireAuthenticatedUser());
 });
 
+// Configurazione dei servizi di sessione
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Imposta il timeout della sessione
+    options.Cookie.HttpOnly = true; // Imposta il cookie della sessione come HttpOnly
+    options.Cookie.IsEssential = true; // Rende il cookie della sessione essenziale
+});
+
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
@@ -35,7 +43,6 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<PizzeriaContext>();
-    context.Database.Migrate();
 
     // Creazione dell'utente amministratore
     var userService = scope.ServiceProvider.GetRequiredService<UserService>();
@@ -59,6 +66,8 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseSession(); // Aggiungi il middleware per gestire la sessione
 
 app.MapControllerRoute(
     name: "default",

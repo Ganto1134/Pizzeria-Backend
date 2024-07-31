@@ -104,34 +104,47 @@ public class PizzeController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Foto,Prezzo,Tempo")] Pizza pizza, int[] ingredientiIds)
+    public async Task<IActionResult> Edit(int id, PizzaCreateViewModel model)
     {
-        if (id != pizza.Id)
-        {
-            return NotFound();
-        }
 
         if (ModelState.IsValid)
         {
+            var pizza = await _context.Pizze.Include(p => p.PizzaIngredienti)
+                                            .FirstOrDefaultAsync(p => p.Id == id);
+            if (pizza == null)
+            {
+                return NotFound();
+            }
+
+            // Aggiorna le proprietà della pizza
+            pizza.Nome = model.Nome;
+            pizza.Foto = model.Foto;
+            pizza.Prezzo = model.Prezzo;
+            pizza.Tempo = model.Tempo;
+
             try
             {
-                _context.Update(pizza);
+                _context.Pizze.Update(pizza);
                 await _context.SaveChangesAsync();
 
+                // Rimuovi gli ingredienti esistenti
                 var existingIngredients = _context.PizzaIngrediente.Where(pi => pi.PizzaId == id).ToList();
                 _context.PizzaIngrediente.RemoveRange(existingIngredients);
                 await _context.SaveChangesAsync();
 
-                foreach (var ingredienteId in ingredientiIds)
+                // Aggiungi i nuovi ingredienti
+                if (model.IngredientiIds != null && model.IngredientiIds.Any())
                 {
-                    _context.PizzaIngrediente.Add(new PizzaIngrediente
+                    foreach (var ingredienteId in model.IngredientiIds)
                     {
-                        PizzaId = pizza.Id,
-                        IngredienteId = ingredienteId
-                    });
+                        _context.PizzaIngrediente.Add(new PizzaIngrediente
+                        {
+                            PizzaId = pizza.Id,
+                            IngredienteId = ingredienteId
+                        });
+                    }
+                    await _context.SaveChangesAsync();
                 }
-
-                await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -146,8 +159,9 @@ public class PizzeController : Controller
             }
             return RedirectToAction(nameof(Index));
         }
+
         ViewData["Ingredienti"] = _context.Ingredienti.ToList();
-        return View(pizza);
+        return View(model);
     }
 
     public async Task<IActionResult> Delete(int? id)

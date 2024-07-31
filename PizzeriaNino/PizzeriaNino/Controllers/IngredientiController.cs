@@ -64,15 +64,19 @@ public class IngredientiController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int id, [Bind("Id,Nome")] Ingrediente ingrediente)
+    public async Task<IActionResult> Edit(int id, IngredientiCreateViewModel model)
     {
-        if (id != ingrediente.Id)
-        {
-            return NotFound();
-        }
-
         if (ModelState.IsValid)
         {
+            var ingrediente = await _context.Ingredienti.FindAsync(id);
+            if (ingrediente == null)
+            {
+                return NotFound();
+            }
+
+            // Aggiornamento delle proprietà dell'ingrediente
+            ingrediente.Nome = model.Nome;
+
             try
             {
                 _context.Update(ingrediente);
@@ -91,7 +95,8 @@ public class IngredientiController : Controller
             }
             return RedirectToAction(nameof(Index));
         }
-        return View(ingrediente);
+
+        return View(model);
     }
 
     public async Task<IActionResult> Delete(int? id)
