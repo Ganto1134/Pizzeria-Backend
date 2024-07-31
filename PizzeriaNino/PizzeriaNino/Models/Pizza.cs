@@ -1,4 +1,6 @@
-﻿namespace PizzeriaNino.Models
+﻿using Newtonsoft.Json;
+
+namespace PizzeriaNino.Models
 {
     public class Pizza
     {
@@ -8,6 +10,7 @@
         public decimal Prezzo { get; set; }
         public int Tempo { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<PizzaIngrediente> PizzaIngredienti { get; set; }
     }
 }

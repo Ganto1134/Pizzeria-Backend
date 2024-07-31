@@ -1,0 +1,73 @@
+﻿@model IEnumerable<PizzeriaNino.Models.Order>
+
+@{
+    ViewData["Title"] = "Gestione Ordini";
+}
+
+<h2>Gestione Ordini</h2>
+
+<div id="statistics">
+    <p><strong>Ordini Evasi Oggi:</strong> <span>@ViewBag.TotalOrdersCompleted</span></p>
+    <p><strong>Totale Incassato (oggi):</strong> <span>@ViewBag.TotalRevenue.ToString("F2") €</span></p>
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>Data</th>
+            <th>Indirizzo di Spedizione</th>
+            <th>Note</th>
+            <th>Pizze</th>
+            <th>Status</th>
+            <th>Azioni</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model)
+        {
+            <tr>
+                <td>@order.Id</td>
+                <td>@order.OrderDate.ToString("g")</td>
+                <td>@order.ShippingAddress</td>
+                <td>@order.Notes</td>
+                <td>
+                    <ul>
+                        @if (order.OrderItems != null && order.OrderItems.Any())
+                        {
+                            @foreach (var item in order.OrderItems)
+                            {
+                                @if (item.Pizza != null)
+                                {
+                                    <li>@item.Pizza.Nome - Quantità: @item.Quantity</li>
+                                }
+                                else
+                                {
+                                    <li>Pizza non trovata - Quantità: @item.Quantity</li>
+                                }
+                            }
+                        }
+                        else
+                        {
+                            <li>Nessun articolo in questo ordine</li>
+                        }
+                    </ul>
+                </td>
+                <td>@order.Status</td>
+                <td>
+                    @if (order.Status != "Completed")
+                    {
+                        <form asp-action="MarkAsCompleted" method="post" style="display:inline-block;">
+                            <input type="hidden" name="orderId" value="@order.Id" />
+                            <button type="submit" class="btn btn-success btn-sm">Segna come EVASO</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <span class="badge bg-success">Completato</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

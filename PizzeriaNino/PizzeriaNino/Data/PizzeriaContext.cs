@@ -20,13 +20,15 @@ public partial class PizzeriaContext : DbContext
     public DbSet<Pizza> Pizze { get; set; }
     public DbSet<Ingrediente> Ingredienti { get; set; }
     public DbSet<PizzaIngrediente> PizzaIngrediente { get; set; }
+    public DbSet<Order> Orders { get; set; }
+    public DbSet<OrderItem> OrderItems { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer("Data Source=.\\SQLEXPRESS;Initial Catalog=Pizzeria;Integrated Security=true;TrustServerCertificate=True");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        OnModelCreatingPartial(modelBuilder);
+        base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity<PizzaIngrediente>()
             .HasKey(pi => new { pi.PizzaId, pi.IngredienteId });

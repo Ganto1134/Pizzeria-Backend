@@ -1,0 +1,34 @@
+﻿@model IEnumerable<PizzeriaNino.Models.Pizza>
+
+@{
+    ViewData["Title"] = "Menu";
+}
+
+<h2>Menu delle Pizze</h2>
+<div class="row">
+    @foreach (var pizza in Model)
+    {
+        <div class="col-md-4">
+            <div class="card mb-4 shadow-sm">
+                <img src="@pizza.Foto" class="card-img-top" alt="Immagine di @pizza.Nome" />
+                <div class="card-body">
+                    <h5 class="card-title">@pizza.Nome</h5>
+                    <p class="card-text">
+                        Ingredienti: @string.Join(", ", pizza.PizzaIngredienti.Select(pi => pi.Ingrediente.Nome))
+                    </p>
+                    <p class="card-text">
+                        Prezzo: @pizza.Prezzo € - Tempo di preparazione: @pizza.Tempo minuti
+                    </p>
+                    <form asp-action="AddToCart" method="post" class="add-to-cart-form">
+    <input type="hidden" name="pizzaId" value="@pizza.Id" />
+    <div class="form-group">
+        <label for="quantity_@pizza.Id">Quantità</label>
+        <input type="number" id="quantity_@pizza.Id" name="quantity" class="form-control mb-2 mr-sm-2" value="1" min="1" />
+    </div>
+    <button type="submit" class="btn btn-primary mb-2">Aggiungi al carrello</button>
+</form>
+                </div>
+            </div>
+        </div>
+    }
+</div>

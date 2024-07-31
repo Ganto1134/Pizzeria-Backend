@@ -1,0 +1,35 @@
+﻿@model IEnumerable<CartItem>
+
+<h2>Carrello</h2>
+<form asp-action="ConfirmOrder" method="post">
+    <table>
+        <thead>
+            <tr>
+                <th>Pizza</th>
+                <th>Quantità</th>
+                <th>Prezzo</th>
+                <th>Totale</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Pizza.Nome</td>
+                    <td>@item.Quantity</td>
+                    <td>@item.Pizza.Prezzo €</td>
+                    <td>@(item.Pizza.Prezzo * item.Quantity) €</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div>
+        <label>Indirizzo di spedizione</label>
+        <input type="text" name="shippingAddress" required />
+    </div>
+    <div>
+        <label>Note</label>
+        <textarea name="notes"></textarea>
+    </div>
+    <input type="submit" value="Concludi ordine" />
+</form>
