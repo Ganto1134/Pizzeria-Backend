@@ -18,5 +18,25 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background: linear-gradient(to bottom right, #ff4500, #ff6347, #ffa07a, #ffd700);
+    background-size: 400% 400%;
+    animation: gradientBackground 10s ease infinite;
 }
+
+@keyframes gradientBackground {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }

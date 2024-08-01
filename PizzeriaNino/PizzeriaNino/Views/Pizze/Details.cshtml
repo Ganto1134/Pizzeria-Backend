@@ -4,41 +4,41 @@
     ViewData["Title"] = "Pizza Details";
 }
 
-<h2>Pizza Details</h2>
+<h2>Dettagli Pizza</h2>
 
 <div>
     <h4>Pizza</h4>
     <hr />
     <dl class="row">
-        <dt class="col-sm-2">
+        <dt class="col-sm-2 border-bottom border-2">
             @Html.DisplayNameFor(model => model.Nome)
         </dt>
-        <dd class="col-sm-10">
+        <dd class="col-sm-10 ">
             @Html.DisplayFor(model => model.Nome)
         </dd>
-        <dt class="col-sm-2">
+        <dt class="col-sm-2 border-bottom border-2">
             @Html.DisplayNameFor(model => model.Foto)
         </dt>
-        <dd class="col-sm-10">
+        <dd class="col-sm-10 ">
             @Html.DisplayFor(model => model.Foto)
             <img src="@Model.Foto" alt="Pizza Image" style="max-width:200px;" />
         </dd>
-        <dt class="col-sm-2">
+        <dt class="col-sm-2 border-bottom border-2">
             @Html.DisplayNameFor(model => model.Prezzo)
         </dt>
-        <dd class="col-sm-10">
+        <dd class="col-sm-10 ">
             @Html.DisplayFor(model => model.Prezzo)
         </dd>
-        <dt class="col-sm-2">
+        <dt class="col-sm-2 border-bottom border-2">
             @Html.DisplayNameFor(model => model.Tempo)
         </dt>
-        <dd class="col-sm-10">
+        <dd class="col-sm-10 ">
             @Html.DisplayFor(model => model.Tempo)
         </dd>
-        <dt class="col-sm-2">
+        <dt class="col-sm-2 border-bottom border-2">
             Ingredienti
         </dt>
-        <dd class="col-sm-10">
+        <dd class="col-sm-10 ">
             <ul>
                 @foreach (var ingrediente in Model.PizzaIngredienti)
                 {
@@ -48,7 +48,8 @@
         </dd>
     </dl>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+<div class="container mt-3">
+    <div class="d-flex justify-content-start">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning mr-2 me-2">Modifica</a>
+        <a asp-action="Index" class="btn btn-secondary">Torna alla Lista</a>
+    </div>

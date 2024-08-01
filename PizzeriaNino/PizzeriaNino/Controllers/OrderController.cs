@@ -17,8 +17,6 @@ public class OrderController : Controller
         _context = context;
         _cartService = cartService;
     }
-
-    // Visualizza il menu delle pizze
     public async Task<IActionResult> Menu()
     {
         var pizze = await _context.Pizze.Include(p => p.PizzaIngredienti)
@@ -27,7 +25,6 @@ public class OrderController : Controller
         return View(pizze);
     }
 
-    // Aggiunge una pizza al carrello
     [HttpPost]
     [ValidateAntiForgeryToken]
     public IActionResult AddToCart(int pizzaId, int quantity)
@@ -57,29 +54,26 @@ public class OrderController : Controller
         return RedirectToAction("Cart");
     }
 
-    // Visualizza il contenuto del carrello
     public IActionResult Cart()
     {
         var cartItems = _cartService.GetCartItems();
         return View(cartItems);
     }
 
-    // Conferma l'ordine
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> ConfirmOrder(string shippingAddress, string notes)
     {
-        // Controlla che l'indirizzo di spedizione non sia null o vuoto
         if (string.IsNullOrWhiteSpace(shippingAddress))
         {
             ModelState.AddModelError("", "L'indirizzo di spedizione è obbligatorio.");
-            return RedirectToAction("Cart"); // O ritorna una vista appropriata con l'errore
+            return RedirectToAction("Cart"); 
         }
 
         var order = new Order
         {
             ShippingAddress = shippingAddress,
-            Notes = notes ?? string.Empty, // Usa string.Empty se notes è null
+            Notes = notes ?? string.Empty, 
             OrderDate = DateTime.Now,
             Status = "Pending",
             OrderItems = _cartService.GetCartItems().Select(ci => new OrderItem
@@ -95,20 +89,17 @@ public class OrderController : Controller
         return View("OrderConfirmed", order);
     }
 
-    // Visualizza tutti gli ordini (accessibile solo agli amministratori)
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> ManageOrders()
     {
         var today = DateTime.Today;
         var tomorrow = today.AddDays(1);
 
-        // Ottieni tutti gli ordini, indipendentemente dallo stato
         var allOrders = await _context.Orders
             .Include(o => o.OrderItems)
             .ThenInclude(oi => oi.Pizza)
             .ToListAsync();
 
-        // Filtra e calcola le metriche solo per gli ordini completati di oggi
         var completedOrdersToday = allOrders
             .Where(o => o.Status == "Completed" && o.OrderDate >= today && o.OrderDate < tomorrow)
             .ToList();
@@ -119,10 +110,10 @@ public class OrderController : Controller
         ViewBag.TotalOrdersCompleted = totalOrdersCompleted;
         ViewBag.TotalRevenue = totalRevenue;
 
-        return View(allOrders); // Passa tutti gli ordini alla vista
+        return View(allOrders); 
     }
 
-    // Segna un ordine come "EVASO"
+   
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = "Admin")]
